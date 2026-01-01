@@ -17,102 +17,121 @@ ScreenGui.ResetOnSpawn = false
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 350, 0, 250)
-MainFrame.Position = UDim2.new(0.5, -175, 0.5, -125)
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.5, -175, 0.4, -125)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
-MainFrame.ClipsDescendants = true
+MainFrame.Active = true -- Penting untuk drag
+MainFrame.Draggable = false -- Kita pakai script manual agar lebih smooth
 MainFrame.Parent = ScreenGui
 
 local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.CornerRadius = UDim.new(0, 8)
 UICorner.Parent = MainFrame
 
--- Title Bar & RGB Animation
-local TitleBar = Instance.new("TextLabel")
-TitleBar.Name = "TitleBar"
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-TitleBar.Text = "Shot The Boss"
-TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleBar.Font = Enum.Font.Code
-TitleBar.TextSize = 20
-TitleBar.Parent = MainFrame
+-- RBXASSET Icon (Contoh Ikon Game Pass/Pet)
+local Icon = Instance.new("ImageLabel")
+Icon.Name = "UIIcon"
+Icon.Size = UDim2.new(0, 25, 0, 25)
+Icon.Position = UDim2.new(0, 10, 0, 7)
+Icon.BackgroundTransparency = 1
+Icon.Image = "rbxassetid://6031763426" -- Ikon Mahkota/Boss
+Icon.Parent = MainFrame
 
--- RGB Effect Script
+-- Title Bar (RGB Animation)
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -100, 0, 40)
+TitleLabel.Position = UDim2.new(0, 40, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Shot The Boss"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.Font = Enum.Font.Code
+TitleLabel.TextSize = 18
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = MainFrame
+
+-- Loop RGB
 spawn(function()
     while task.wait() do
         local hue = tick() % 5 / 5
-        TitleBar.TextColor3 = Color3.fromHSV(hue, 1, 1)
+        TitleLabel.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
     end
 end)
 
---- Buttons (X & Minimize)
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
-CloseBtn.Text = "X"
-CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseBtn.Font = Enum.Font.Code
+-- Buttons (Minimize & Close)
+local CloseBtn = Instance.new("ImageButton")
+CloseBtn.Size = UDim2.new(0, 20, 0, 20)
+CloseBtn.Position = UDim2.new(1, -30, 0, 10)
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Image = "rbxassetid://6031094678" -- X Icon
+CloseBtn.ImageColor3 = Color3.fromRGB(255, 100, 100)
 CloseBtn.Parent = MainFrame
 
-local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 30, 0, 30)
-MinBtn.Position = UDim2.new(1, -70, 0, 5)
-MinBtn.Text = "-"
-MinBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-MinBtn.Font = Enum.Font.Code
+local MinBtn = Instance.new("ImageButton")
+MinBtn.Size = UDim2.new(0, 20, 0, 20)
+MinBtn.Position = UDim2.new(1, -60, 0, 10)
+MinBtn.BackgroundTransparency = 1
+MinBtn.Image = "rbxassetid://6034818372" -- Minus Icon
 MinBtn.Parent = MainFrame
 
---- Containers
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(1, 0, 1, -40)
-ContentFrame.Position = UDim2.new(0, 0, 0, 40)
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.Parent = MainFrame
+--- CONTENT AREA ---
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, -20, 1, -50)
+Content.Position = UDim2.new(0, 10, 0, 45)
+Content.BackgroundTransparency = 1
+Content.Parent = MainFrame
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Parent = ContentFrame
-UIListLayout.Padding = UDim.new(0, 10)
-UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local Layout = Instance.new("UIListLayout")
+Layout.Parent = Content
+Layout.Padding = UDim.new(0, 8)
 
--- Functions & Input Setup
-local function CreateAction(text, placeholder, callback)
-    local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(0.9, 0, 0, 45)
-    Frame.BackgroundTransparency = 1
-    Frame.Parent = ContentFrame
+-- Function Generator
+local function AddModule(title, placeholder, callback)
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(1, 0, 0, 40)
+    Container.BackgroundTransparency = 1
+    Container.Parent = Content
 
-    local Input = Instance.new("TextBox")
-    Input.Size = UDim2.new(0.4, 0, 1, 0)
-    Input.PlaceholderText = placeholder
-    Input.Text = ""
-    Input.Font = Enum.Font.Code
-    Input.Parent = Frame
+    local Box = Instance.new("TextBox")
+    Box.Size = UDim2.new(0.3, 0, 1, 0)
+    Box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Box.PlaceholderText = placeholder
+    Box.Text = "1"
+    Box.Font = Enum.Font.Code
+    Box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Box.Parent = Container
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 4)
+    Corner.Parent = Box
 
     local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0.55, 0, 1, 0)
-    Btn.Position = UDim2.new(0.45, 0, 0, 0)
-    Btn.Text = text
+    Btn.Size = UDim2.new(0.65, 0, 1, 0)
+    Btn.Position = UDim2.new(0.35, 0, 0, 0)
+    Btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Btn.Text = title
     Btn.Font = Enum.Font.Code
-    Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.Parent = Frame
+    Btn.Parent = Container
+
+    local BCorner = Instance.new("UICorner")
+    BCorner.CornerRadius = UDim.new(0, 4)
+    BCorner.Parent = Btn
 
     Btn.MouseButton1Click:Connect(function()
-        local val = tonumber(Input.Text) or 1
-        callback(val)
+        callback(tonumber(Box.Text) or 1)
     end)
 end
 
--- Script Actions
--- 1. Hatch OP Pet
+-- MODULES
+-- 1. Get OP Pet
 local HatchBtn = Instance.new("TextButton")
-HatchBtn.Size = UDim2.new(0.9, 0, 0, 40)
-HatchBtn.Text = "Get OP Pet (Abyss)"
+HatchBtn.Size = UDim2.new(1, 0, 0, 40)
+HatchBtn.BackgroundColor3 = Color3.fromRGB(70, 30, 100)
+HatchBtn.Text = "Get Op Pet"
 HatchBtn.Font = Enum.Font.Code
-HatchBtn.BackgroundColor3 = Color3.fromRGB(80, 40, 120)
 HatchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-HatchBtn.Parent = ContentFrame
+HatchBtn.Parent = Content
+Instance.new("UICorner", HatchBtn).CornerRadius = UDim.new(0,4)
 
 HatchBtn.MouseButton1Click:Connect(function()
     local args = {"Abyss", "Soul Warden", 14000}
@@ -120,74 +139,77 @@ HatchBtn.MouseButton1Click:Connect(function()
 end)
 
 -- 2. Win Gain
-CreateAction("Gain Win", "Amount", function(val)
+AddModule("Gain Win", "Amt", function(val)
     game:GetService("ReplicatedStorage"):WaitForChild("Event"):WaitForChild("WinGain"):FireServer(unpack({val}))
 end)
 
 -- 3. Train
-CreateAction("Train", "Amount", function(val)
+AddModule("Train Strength", "Amt", function(val)
     game:GetService("ReplicatedStorage"):WaitForChild("Event"):WaitForChild("Train"):FireServer(unpack({val}))
 end)
 
--- Full Drag System
+--- FULL DRAG SYSTEM (Smooth) ---
 local dragging, dragInput, dragStart, startPos
 local function update(input)
     local delta = input.Position - dragStart
-    TweenService:Create(MainFrame, TweenInfo.new(0.1), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)}):Play()
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
 MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+    if input == dragInput and dragging then
         update(input)
     end
 end)
 
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
-end)
-
--- Minimize Logic
-local isMinimized = false
+--- MINIMIZE & CLOSE LOGIC ---
+local minimized = false
 MinBtn.MouseButton1Click:Connect(function()
-    isMinimized = not isMinimized
-    local targetSize = isMinimized and UDim2.new(0, 350, 0, 40) or UDim2.new(0, 350, 0, 250)
-    TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = targetSize}):Play()
-    ContentFrame.Visible = not isMinimized
+    minimized = not minimized
+    local targetSize = minimized and UDim2.new(0, 350, 0, 40) or UDim2.new(0, 350, 0, 250)
+    TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back), {Size = targetSize}):Play()
+    Content.Visible = not minimized
 end)
 
--- Destroy Logic
 CloseBtn.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
+    MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Back", 0.3, true, function()
+        ScreenGui:Destroy()
+    end)
 end)
 
--- Notification
-local function Notify(txt)
-    local Notification = Instance.new("TextLabel")
-    Notification.Size = UDim2.new(0, 250, 0, 50)
-    Notification.Position = UDim2.new(1, 0, 0.8, 0)
-    Notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Notification.Text = txt
-    Notification.Font = Enum.Font.Code
-    Notification.Parent = ScreenGui
+-- NOTIFICATION
+local function CreateNotify(msg)
+    local Notif = Instance.new("TextLabel")
+    Notif.Size = UDim2.new(0, 250, 0, 40)
+    Notif.Position = UDim2.new(1, 10, 0.9, 0)
+    Notif.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Notif.TextColor3 = Color3.fromRGB(0, 255, 150)
+    Notif.Text = msg
+    Notif.Font = Enum.Font.Code
+    Notif.Parent = ScreenGui
+    Instance.new("UICorner", Notif)
     
-    local Corner = Instance.new("UICorner")
-    Corner.Parent = Notification
-    
-    Notification:TweenPosition(UDim2.new(1, -260, 0.8, 0), "Out", "Quart", 0.5)
+    Notif:TweenPosition(UDim2.new(1, -260, 0.9, 0), "Out", "Quart", 0.5)
     task.wait(3)
-    Notification:TweenPosition(UDim2.new(1, 0, 0.8, 0), "In", "Quart", 0.5)
-    task.delay(0.5, function() Notification:Destroy() end)
+    Notif:TweenPosition(UDim2.new(1, 10, 0.9, 0), "In", "Quart", 0.5)
 end
 
-Notify("Made By @SilentExecute")
+CreateNotify("Made By @SilentExecute")
